@@ -32,7 +32,6 @@ ig.state.generateDevice(process.env.IG_USERNAME);
     const locations = await ig.search.location(latitude, longitude, searchQuery);
     const mediaLocation = locations[0];
     console.log(mediaLocation.name);
-    /*
     const publishResult = await ig.publish.photo({
         // read the file into a Buffer
         file: await readFileAsync('./1651296734358.jpg'),
@@ -42,12 +41,7 @@ ig.state.generateDevice(process.env.IG_USERNAME);
         //location: mediaLocation,
     });
     console.log(publishResult);
-    */
     //console.log(file);
-    const publishResult = await ig.publish.story({ 
-        file:  await readFileAsync('./stories/story1.jpg')
-    });
-    console.log(publishResult);
     debugger;
     //const userFeed = ig.feed.user(loggedInUser.pk);
     //const myPostsFirstPage = await userFeed.items();

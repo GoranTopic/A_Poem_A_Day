@@ -5,7 +5,6 @@ import { StickerBuilder } from 'instagram-private-api/dist/sticker-builder/index
 const readFileAsync = promisify(readFile);
 
 const post_story = async (ig, story_path) => {
-    console.log(story_path);
     let publish_result = await ig.publish.story({
         file: await readFileAsync(story_path),
         // this creates a new config

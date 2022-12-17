@@ -25,18 +25,15 @@ let checklist = new Checklist(
 
 // get next missing poem
 let title = checklist.nextMissing();
-//console.log('title');
-//console.log(title);
+console.log(`Poem: ${title} selected`)
 
 // read the poem
 let poem = read_file(poems_path + title);
-//console.log('poem');
-//console.log(poem)
+console.log('poem read');
 
 // divied poem into caption
 let poem_texts = divide(poem + `\n - ${author}`);
-//console.log('poem_texts');
-//console.log(poem_texts)
+console.log('poem divided into stories');
 
 // for each poem text make a story img
 let story_imgs = [];
@@ -45,13 +42,13 @@ for (let i = 1; i < poem_texts.length+1; i++){
     let story_path =  `./stories/story${i}.jpg`;
     story_imgs.push(story_path);
     let result = await make_story_img(text, story_path);
+    console.log(`story image ${story_path}, created`);
 }
 
 // add exif data to images
 for (let img of story_imgs)
     insert_exif(img);
-
-/*
+console.log('exif data added...');
 
 // generate device
 const ig = new IgApiClient();
@@ -64,12 +61,12 @@ await login(ig);
 let results = [];
 for(let story of story_imgs){
     let result = await post_story(ig, story);
-    console.log(story + '->' + result.status);
+    console.log(story + ' post status: ' + result.status);
     results.push(result);
 }
 
 // if we where able to post the stories, check the poem
-if( results.every(res => res.status === 'ok' ) )
+if( results.every(res => res.status === 'ok' ) ){
     checklist.check(title);
-*/
-
+    console.log(`${title} checked off`)
+}

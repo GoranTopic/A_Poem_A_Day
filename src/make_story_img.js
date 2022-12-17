@@ -3,7 +3,7 @@ import im from 'imagemagick';
 const make_story_img = async (text, story_filename) => 
     await new Promise( (res, rej) => {
         im.convert([
-            '-size', '1200x800', 
+            '-size', '1080x1920', 
             '-background', 'black', 
             '-fill', 'white', 
             '-font', 'Corsiva', 
