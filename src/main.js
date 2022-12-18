@@ -1,13 +1,22 @@
 import { IgApiClient } from 'instagram-private-api';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { ls_dir, read_json } from './files.js';
+import { ls_dir, read_json, delete_file } from './files.js';
 import Checklist from './Checklist.js';
-import divide from './poem_divider.js';
+import poem_divider from './poem_divider.js';
 import make_story_img from './make_story_img.js';
 import insert_exif from './insert_exif.js';
 import login from './instagram_api/login.js';
 import post_story from './instagram_api/post_story.js'
+import options from './options.js'
+
+// sometimes we don't want to post
+// the poem for debuggin purposes
+let post_on_inst = options.post_on_inst;
+// we could add a title page
+let add_title_story_img = options.add_title_story_img;
+// do we delete the story images at the end
+let delete_imgs = options.delete_imgs;
 
 let poems_path = './Poems_of_the_Day/';
 
@@ -22,50 +31,68 @@ let checklist = new Checklist(
 );
 
 // get next missing poem
-let title = checklist.nextMissing();
-console.log(`Poem: ${title} selected`)
+let filename = checklist.nextMissing();
 
 // read the poem
-let { poem, author, year } = read_json(poems_path + title);
-console.log('poem read');
+let { poem, author, year, title } = read_json(poems_path + filename);
+console.log({ 
+    Poem: title,
+    Author: author,
+    year: year
+})
 
 // divied poem into caption
-let poem_texts = divide(poem + `\n - ${author} (${year})`);
-console.log('poem divided into stories');
+let poem_texts = poem_divider({poem, author, year});
+console.log('divided into stories');
 
-// for each poem text make a story img
+// let create stories images
 let story_imgs = [];
+
+// create title story page
+if(add_title_story_img){
+    let title_story_path = `./stories/story0.jpg`;
+    let title_story_text = `Poem of the Day: \n${title}`
+    let result = await make_story_img(title_story_text, title_story_path);
+    story_imgs.push(title_story_path);
+    console.log(`story image ${title_story_path}, created`);
+}
+
+// for each poem text make a story text img
 for (let i = 1; i < poem_texts.length+1; i++){
     let text = poem_texts[i-1];
     let story_path =  `./stories/story${i}.jpg`;
-    story_imgs.push(story_path);
     let result = await make_story_img(text, story_path);
+    story_imgs.push(story_path);
     console.log(`story image ${story_path}, created`);
 }
 
 // add exif data to images
-for (let img of story_imgs)
-    insert_exif(img);
-console.log('exif data added...');
+for (let img of story_imgs) insert_exif(img);
+console.log('exif data added');
 
+if(post_on_inst){
+// if we are posting the poem
+    // generate device
+    const ig = new IgApiClient();
+    // generate device
+    ig.state.generateDevice(process.env.IG_USERNAME);
 
-// generate device
-const ig = new IgApiClient();
-// generate device
-ig.state.generateDevice(process.env.IG_USERNAME);
+    // login
+    await login(ig);
+    // post the story
+    let results = [];
+    for(let story of story_imgs){
+        let result = await post_story(ig, story);
+        console.log(story + ' post status: ' + result.status);
+        results.push(result);
+    }
 
-// login
-await login(ig);
-// post the story
-let results = [];
-for(let story of story_imgs){
-    let result = await post_story(ig, story);
-    console.log(story + ' post status: ' + result.status);
-    results.push(result);
+    // if we where able to post the stories, check the poem
+    if( results.every(res => res.status === 'ok' ) ){
+        checklist.check(title);
+        console.log(`${title} checked off`)
+    }
 }
 
-// if we where able to post the stories, check the poem
-if( results.every(res => res.status === 'ok' ) ){
-    checklist.check(title);
-    console.log(`${title} checked off`)
-}
+// delete poems in ./stories folder
+if(delete_imgs) story_imgs.forEach(s => delete_file(s));

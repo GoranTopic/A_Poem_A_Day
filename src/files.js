@@ -69,10 +69,22 @@ const ls_dir = path => {
     try{
         return fs.readdirSync(path, { withFileTypes: true });
     }catch(e) {
-        console.error('could read directory: ' + e);
+        console.error('could read directory: ' + path);
+        console.error(e)
         return null;
     } 
 }
 
-export { write_json, read_json, delete_json, mkdir, ls_dir, fileExists, read_file }
+const delete_file = path => {
+    try{
+        return fs.unlinkSync(path);
+    }catch(e) {
+        console.error('could delete file: ' + path);
+        console.error(e)
+        return null;
+    } 
+}
+
+
+export { write_json, read_json, delete_json, mkdir, ls_dir, delete_file, fileExists, read_file }
 

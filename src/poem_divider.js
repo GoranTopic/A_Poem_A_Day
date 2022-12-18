@@ -1,7 +1,11 @@
 // the cut off for the story is 10 lines
 let cut_off = 10;
 
-const divide = poem => {
+const divide = ({poem, author, year}) => {
+    // add author and year to the end of the poem
+    poem = poem + `\n - ${author} (${year})`;
+    // add 'poem of the day' message
+    poem = poem + `\n\npoem of the day`;
     // get lines of poem
     let lines = poem.split(/\r\n|\r|\n/);
     // count the enumber of lines
