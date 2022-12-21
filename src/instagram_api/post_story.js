@@ -7,6 +7,7 @@ const readFileAsync = promisify(readFile);
 const post_story = async (ig, story_path) => {
     let publish_result = await ig.publish.story({
         file: await readFileAsync(story_path),
+	    /*
         // this creates a new config
         stickerConfig: new StickerBuilder()
         // you can also set different values for the position and dimensions
@@ -20,6 +21,7 @@ const post_story = async (ig, story_path) => {
             }),
         )
         .build(),
+	    */
     });
     // return result
     return publish_result;

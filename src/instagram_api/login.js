@@ -10,9 +10,9 @@ async function login(ig) {
     await ig.simulate.preLoginFlow();
     // login
     const loggedInUser = await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
-    console.log('logged in as:', loggedInUser.username);
     // Optionally wrap it to process.nextTick so we dont need to wait ending of this bunch of requests
     //process.nextTick(async () => { await ig.simulate.postLoginFlow(); })
+    console.log('logged in as:', loggedInUser.username);
 }
 
 export default login
