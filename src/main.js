@@ -20,20 +20,27 @@ let add_title_story_img = options.add_title_story_img;
 // do we delete the story images at the end
 let delete_imgs = options.delete_imgs;
 // where the poems live
-let poems_path = './Poems_of_the_Day/';
+let poems_path = options.poems_path;
+let stories_path = options.stories_images_path;
+// wait between post requests
+let wait_secs = options.sec_wait_per_post;
+// make logger
+const log = make_logger('', true);
 
 // read all the poem in file
 let poem_titles = ls_dir(poems_path)
     .map(f => f.name);
+
+// delete any poems in ./stories folder
+if(delete_imgs) ls_dir(stories_path)
+	.forEach(s => delete_file(stories_path + s.name));
+log('deleting previous stories images')
 
 // get checklist
 let checklist = new Checklist(
     'checklist', 
     poem_titles, 
 );
-
-// make logger
-const log = make_logger('', true);
 
 // get next missing poem
 let filename = checklist.nextMissing();
@@ -55,7 +62,7 @@ let story_imgs = [];
 
 // create title story page
 if(add_title_story_img){
-    let title_story_path = `./stories/story0.jpg`;
+    let title_story_path = stories_path + `story0.jpg`;
     let title_story_text = `Poem of the Day: \n${title}`
     let result = await make_story_img(title_story_text, title_story_path);
     story_imgs.push(title_story_path);
@@ -65,7 +72,7 @@ if(add_title_story_img){
 // for each poem text make a story text img
 for (let i = 1; i < poem_texts.length+1; i++){
     let text = poem_texts[i-1];
-    let story_path =  `./stories/story${i}.jpg`;
+    let story_path =  stories_path + `/story${i}.jpg`;
     let result = await make_story_img(text, story_path);
     story_imgs.push(story_path);
     log(`story image ${story_path}, created`);
@@ -88,11 +95,11 @@ if(post_on_inst){
     let results = [];
     for(let story of story_imgs){
         let result = await post_story(ig, story);
-        log(story + ' post status: ' + result.status);
+        log(story + ' post result: ' + result.status);
         results.push(result);
 	// wait for a minute
 	log('waiting for 15s');
-	await sleep(1000 * 15);
+	await sleep(1000 * wait_secs);
     }
 
     // if we where able to post the stories, check the poem
@@ -102,5 +109,3 @@ if(post_on_inst){
     }
 }
 
-// delete poems in ./stories folder
-if(delete_imgs) story_imgs.forEach(s => delete_file(s));

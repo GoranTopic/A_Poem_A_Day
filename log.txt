@@ -1,0 +1,15 @@
+/bin/sh: 1: npm: not found
+file:///home/telix/A_Poem_A_Day/src/main.js:63
+    let result = await make_story_img(title_story_text, title_story_path);
+                 ^^^^^
+
+SyntaxError: Unexpected reserved word
+    at Loader.moduleStrategy (internal/modules/esm/translators.js:133:18)
+    at async link (internal/modules/esm/module_job.js:42:21)
+npm ERR! code 1
+npm ERR! path /home/telix/A_Poem_A_Day
+npm ERR! command failed
+npm ERR! command sh -c node ./src/main.js
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/telix/.npm/_logs/2022-12-23T08_00_02_727Z-debug.log
