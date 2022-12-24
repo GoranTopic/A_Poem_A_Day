@@ -98,7 +98,7 @@ if(post_on_inst){
         log(story + ' post result: ' + result.status);
         results.push(result);
 	// wait for a minute
-	log('waiting for 15s');
+	log(`waiting for ${wait_secs} seconds`);
 	await sleep(1000 * wait_secs);
     }
 

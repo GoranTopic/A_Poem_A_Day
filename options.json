@@ -1,7 +1,7 @@
 {
 	"poems_path": "./Poems_of_the_Day/",
 	"stories_images_path": "./stories/",
-	"post_on_inst": false,
+	"post_on_inst": true,
 	"sec_wait_per_post": 5,
 	"delete_imgs": true,
 	"add_title_story_img": false
